@@ -53,7 +53,7 @@ import com.tinet.jmxhub.mbean.ThreadingMBean.ThreadInfo;
  * @version 1.3.3
  */
 @Component
-public class OpenFalconDataCollector {
+public class OpenFalconDataProvider {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static final String DEFAULT_AGENT_URI = "http://localhost:1988/v1/push";
