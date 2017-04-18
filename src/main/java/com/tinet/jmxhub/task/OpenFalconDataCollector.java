@@ -23,6 +23,10 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,12 +38,12 @@ import com.tinet.jmxhub.mbean.GCGenInfoMBean;
 import com.tinet.jmxhub.mbean.GCThroughputMbean;
 import com.tinet.jmxhub.mbean.MBean;
 import com.tinet.jmxhub.mbean.MemoryUsedMBean;
-import com.tinet.jmxhub.mbean.ThreadingMBean;
 import com.tinet.jmxhub.mbean.MemoryUsedMBean.MemoryUsedInfo;
+import com.tinet.jmxhub.mbean.ThreadingMBean;
 import com.tinet.jmxhub.mbean.ThreadingMBean.ThreadInfo;
 
 /**
- * PushMonitorDataJob：获取jmx信息并推送到小米在本机的agent
+ * OpenFalconDataCollector：获取jmx信息并推送到小米在本机的agent
  * <p>
  * 2017年4月10日 - 下午3:54:59
  * </p>
@@ -48,16 +52,15 @@ import com.tinet.jmxhub.mbean.ThreadingMBean.ThreadInfo;
  * @since 1.3.3
  * @version 1.3.3
  */
-public class PushMonitorDataJob {
+@Component
+public class OpenFalconDataCollector {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private Set<HostStatus> hosts = null;
+	private static final String DEFAULT_AGENT_URI = "http://localhost:1988/v1/push";
 
-	private static final String JMX_PORT = "30000";
-
-	private String hostArray;
-
-	private String pushDataUri;
+	@Autowired
+	private Environment environment;
 
 	private PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 	ConnectionKeepAliveStrategy myStrategy = (response, context) -> 2000;
@@ -65,6 +68,7 @@ public class PushMonitorDataJob {
 	private CloseableHttpClient httpClient = HttpClients.custom().setKeepAliveStrategy(myStrategy)
 			.setConnectionManager(cm).build();
 
+	@Scheduled(cron = "0 0/1 * * * ?")
 	public void pushData() {
 
 		if (hosts == null) {
@@ -74,14 +78,18 @@ public class PushMonitorDataJob {
 
 		hosts.forEach((host) -> {
 			Optional<MBeanServerConnection> optCon = Optional.empty();
-			String jmxHost = host.getHost() + ":" + JMX_PORT;
+			String jmxHost = host.getHost();
 
 			switch (host.getStatus()) {
 			case Constants.HOST_STATUS_NORMAL:
 				try {
-					logger.info(jmxHost + "[获取连接]");
-					optCon = Optional.ofNullable(MBeanServerConnectionFactory.getInstance(host.getHost(), JMX_PORT));
-					logger.info(jmxHost + "[获取连接成功]");
+					if (logger.isInfoEnabled()) {
+						logger.info(jmxHost + "[获取连接]");
+					}
+					optCon = Optional.ofNullable(MBeanServerConnectionFactory.getInstance(host.getHost()));
+					if (logger.isInfoEnabled()) {
+						logger.info(jmxHost + "[获取连接成功]");
+					}
 				} catch (IOException e) {
 					logger.error(jmxHost + "[获取连接失败]");
 					host.addFailCount();
@@ -92,9 +100,13 @@ public class PushMonitorDataJob {
 				break;
 			case Constants.HOST_STATUS_RETRY:
 				try {
-					logger.info(jmxHost + "[重新连接]");
-					optCon = Optional.ofNullable(MBeanServerConnectionFactory.getInstance(host.getHost(), JMX_PORT));
-					logger.info(jmxHost + "[重新连接成功]");
+					if (logger.isInfoEnabled()) {
+						logger.info(jmxHost + "[获取连接]");
+					}
+					optCon = Optional.ofNullable(MBeanServerConnectionFactory.getInstance(host.getHost()));
+					if (logger.isInfoEnabled()) {
+						logger.info(jmxHost + "[获取连接成功]");
+					}
 					host.initial();
 				} catch (IOException e) {
 					logger.error(jmxHost + "[重新连接失败]");
@@ -125,7 +137,7 @@ public class PushMonitorDataJob {
 			});
 		});
 
-		HttpPost post = new HttpPost(pushDataUri);
+		HttpPost post = new HttpPost(getUri());
 		post.setHeader("Charset", "UTF-8");
 		RequestConfig config = RequestConfig.custom().setSocketTimeout(2000).setConnectTimeout(2000).build();
 		post.setConfig(config);
@@ -152,7 +164,9 @@ public class PushMonitorDataJob {
 			logger.error(e.toString(), e);
 		} finally {
 			try {
-				response.close();
+				if (response != null) {
+					response.close();
+				}
 			} catch (IOException e) {
 				logger.error(e.toString(), e);
 			}
@@ -160,21 +174,24 @@ public class PushMonitorDataJob {
 	}
 
 	private Set<HostStatus> getHosts() {
-		String[] hosts = hostArray.split(",");
+		
+		System.out.println(environment.toString());
+		
+		Optional<String> hostArray = Optional.ofNullable(environment.getProperty("monitor.jmx.hosts"));
 		Set<HostStatus> hs = new HashSet<>();
-		for (int i = 0; i < hosts.length; i++) {
-			HostStatus status = new HostStatus();
-			status.setHost(hosts[i]);
-			hs.add(status);
-		}
+		hostArray.ifPresent((host) -> {
+			String[] hosts = host.split(",");
+			for (int i = 0; i < hosts.length; i++) {
+				HostStatus status = new HostStatus();
+				status.setHost(hosts[i]);
+				hs.add(status);
+			}
+		});
 		return hs;
 	}
 
-	public void setHostArray(String hostArray) {
-		this.hostArray = hostArray;
-	}
-
-	public void setPushDataUri(String pushDataUri) {
-		this.pushDataUri = pushDataUri;
+	private String getUri() {
+		Optional<String> uri = Optional.ofNullable(environment.getProperty("monitor.agent.uri"));
+		return uri.orElse(DEFAULT_AGENT_URI);
 	}
 }

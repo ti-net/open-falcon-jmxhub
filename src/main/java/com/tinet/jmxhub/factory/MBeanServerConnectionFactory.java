@@ -34,20 +34,20 @@ public class MBeanServerConnectionFactory {
 
 	private static Map<String, MBeanServerConnection> cache = new ConcurrentHashMap<>();
 
-	private static final String JMXURL = "service:jmx:rmi:///jndi/rmi://{0}:{1}/jmxrmi";
+	private static final String JMXURL = "service:jmx:rmi:///jndi/rmi://{0}/jmxrmi";
 
 	private MBeanServerConnectionFactory() {
 	}
 
-	public static MBeanServerConnection getInstance(String host, String port) throws IOException {
+	public static MBeanServerConnection getInstance(String host) throws IOException {
 		JMXServiceURL serviceURL = null;
 		JMXConnector connector = null;
-		MBeanServerConnection mbsc = cache.get(host + port);
+		MBeanServerConnection mbsc = cache.get(host);
 		if (mbsc == null) {
-			serviceURL = new JMXServiceURL(MessageFormat.format(JMXURL, host, port));
+			serviceURL = new JMXServiceURL(MessageFormat.format(JMXURL, host));
 			connector = connectWithTimeout(serviceURL, 1000, TimeUnit.MILLISECONDS);
 			mbsc = connector.getMBeanServerConnection();
-			cache.put(host + port, mbsc);
+			cache.put(host, mbsc);
 		}
 
 		return mbsc;

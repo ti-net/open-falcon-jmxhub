@@ -76,5 +76,10 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.tinet</groupId>
+			<artifactId>clink-config-client</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 	</dependencies>
 </project>
