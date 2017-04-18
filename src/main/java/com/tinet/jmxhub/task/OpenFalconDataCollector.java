@@ -56,17 +56,20 @@ import com.tinet.jmxhub.mbean.ThreadingMBean.ThreadInfo;
 public class OpenFalconDataCollector {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
-	private Set<HostStatus> hosts = null;
 	private static final String DEFAULT_AGENT_URI = "http://localhost:1988/v1/push";
+	private static final String MONITOR_JMX_HOSTS = "monitor.jmx.hosts";
+	private static final String MONITOR_AGENT_URI = "monitor.agent.uri";
 
-	@Autowired
-	private Environment environment;
+	private Set<HostStatus> hosts = null;
 
 	private PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 	ConnectionKeepAliveStrategy myStrategy = (response, context) -> 2000;
 
 	private CloseableHttpClient httpClient = HttpClients.custom().setKeepAliveStrategy(myStrategy)
 			.setConnectionManager(cm).build();
+
+	@Autowired
+	private Environment environment;
 
 	@Scheduled(cron = "0 0/1 * * * ?")
 	public void pushData() {
@@ -174,10 +177,7 @@ public class OpenFalconDataCollector {
 	}
 
 	private Set<HostStatus> getHosts() {
-		
-		System.out.println(environment.toString());
-		
-		Optional<String> hostArray = Optional.ofNullable(environment.getProperty("monitor.jmx.hosts"));
+		Optional<String> hostArray = Optional.ofNullable(environment.getProperty(MONITOR_JMX_HOSTS));
 		Set<HostStatus> hs = new HashSet<>();
 		hostArray.ifPresent((host) -> {
 			String[] hosts = host.split(",");
@@ -191,7 +191,7 @@ public class OpenFalconDataCollector {
 	}
 
 	private String getUri() {
-		Optional<String> uri = Optional.ofNullable(environment.getProperty("monitor.agent.uri"));
+		Optional<String> uri = Optional.ofNullable(environment.getProperty(MONITOR_AGENT_URI));
 		return uri.orElse(DEFAULT_AGENT_URI);
 	}
 }
