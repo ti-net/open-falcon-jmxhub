@@ -121,7 +121,7 @@ public class MemoryUsedMBean extends AbstractMBean<MemoryUsedInfo> implements MB
 		// 将jvm信息封装成openfalcon格式数据
 		FalconItem oldGenUsedItem = new FalconItem();
 		oldGenUsedItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-		oldGenUsedItem.setEndpoint(getJmxHost());
+		oldGenUsedItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 		oldGenUsedItem.setMetric(StringUtils.lowerCase(Constants.OLD_GEN_MEM_USED));
 		oldGenUsedItem.setStep(Constants.DEFAULT_STEP);
 		oldGenUsedItem.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));
@@ -131,7 +131,7 @@ public class MemoryUsedMBean extends AbstractMBean<MemoryUsedInfo> implements MB
 
 		FalconItem oldGenUsedRatioItem = new FalconItem();
 		oldGenUsedRatioItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-		oldGenUsedRatioItem.setEndpoint(getJmxHost());
+		oldGenUsedRatioItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 		oldGenUsedRatioItem.setMetric(StringUtils.lowerCase(Constants.OLD_GEN_MEM_RATIO));
 		oldGenUsedRatioItem.setStep(Constants.DEFAULT_STEP);
 		oldGenUsedRatioItem.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));
@@ -141,7 +141,7 @@ public class MemoryUsedMBean extends AbstractMBean<MemoryUsedInfo> implements MB
 
 		FalconItem newGenPromotionItem = new FalconItem();
 		newGenPromotionItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-		newGenPromotionItem.setEndpoint(getJmxHost());
+		newGenPromotionItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 		newGenPromotionItem.setMetric(StringUtils.lowerCase(Constants.NEW_GEN_PROMOTION));
 		newGenPromotionItem.setStep(Constants.DEFAULT_STEP);
 		newGenPromotionItem.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));
@@ -151,7 +151,7 @@ public class MemoryUsedMBean extends AbstractMBean<MemoryUsedInfo> implements MB
 
 		FalconItem newGenAvgPromotionItem = new FalconItem();
 		newGenAvgPromotionItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-		newGenAvgPromotionItem.setEndpoint(getJmxHost());
+		newGenAvgPromotionItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 		newGenAvgPromotionItem.setMetric(StringUtils.lowerCase(Constants.NEW_GEN_AVG_PROMOTION));
 		newGenAvgPromotionItem.setStep(Constants.DEFAULT_STEP);
 		newGenAvgPromotionItem.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));

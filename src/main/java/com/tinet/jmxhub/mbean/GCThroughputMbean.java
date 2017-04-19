@@ -59,7 +59,7 @@ public class GCThroughputMbean extends AbstractMBean<Double> implements MBean<Do
 		// 将jvm信息封装成openfalcon格式数据
 		FalconItem item = new FalconItem();
 		item.setCounterType(CounterTypeEnum.GAUGE.toString());
-		item.setEndpoint(getJmxHost());
+		item.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 		item.setMetric(StringUtils.lowerCase(Constants.GC_THROUGH_PUT));
 		item.setStep(Constants.DEFAULT_STEP);
 		item.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));

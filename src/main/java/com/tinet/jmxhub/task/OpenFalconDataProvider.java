@@ -58,7 +58,7 @@ public class OpenFalconDataProvider {
 
 	private static final String DEFAULT_AGENT_URI = "http://localhost:1988/v1/push";
 	private static final String MONITOR_JMX_HOSTS = "monitor.jmx.hosts";
-	private static final String MONITOR_AGENT_URI = "monitor.agent.uri";
+	private static final String JMXHUB_AGENT_URI = "jmxhub.agent.uri";
 
 	private Set<HostStatus> hosts = null;
 
@@ -191,7 +191,7 @@ public class OpenFalconDataProvider {
 	}
 
 	private String getUri() {
-		Optional<String> uri = Optional.ofNullable(environment.getProperty(MONITOR_AGENT_URI));
+		Optional<String> uri = Optional.ofNullable(environment.getProperty(JMXHUB_AGENT_URI));
 		return uri.orElse(DEFAULT_AGENT_URI);
 	}
 }

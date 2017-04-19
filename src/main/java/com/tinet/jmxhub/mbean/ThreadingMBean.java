@@ -48,7 +48,7 @@ public class ThreadingMBean extends AbstractMBean<ThreadInfo> implements MBean<T
 		// 将jvm信息封装成openfalcon格式数据
 		FalconItem threadNumItem = new FalconItem();
 		threadNumItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-		threadNumItem.setEndpoint(getJmxHost());
+		threadNumItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 		threadNumItem.setMetric(StringUtils.lowerCase(Constants.THREAD_ACTIVE_COUNT));
 		threadNumItem.setStep(Constants.DEFAULT_STEP);
 		threadNumItem.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));
@@ -58,7 +58,7 @@ public class ThreadingMBean extends AbstractMBean<ThreadInfo> implements MBean<T
 
 		FalconItem peakThreadNumItem = new FalconItem();
 		peakThreadNumItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-		peakThreadNumItem.setEndpoint(getJmxHost());
+		peakThreadNumItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 		peakThreadNumItem.setMetric(StringUtils.lowerCase(Constants.THREAD_PEAK_COUNT));
 		peakThreadNumItem.setStep(Constants.DEFAULT_STEP);
 		peakThreadNumItem.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));

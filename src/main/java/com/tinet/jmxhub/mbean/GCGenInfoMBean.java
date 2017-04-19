@@ -99,7 +99,7 @@ public class GCGenInfoMBean extends AbstractMBean<Map<String, GCGenInfo>> implem
 		for (String gcMXBeanName : jmxResultData.keySet()) {
 			FalconItem avgTimeItem = new FalconItem();
 			avgTimeItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-			avgTimeItem.setEndpoint(getJmxHost());
+			avgTimeItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 			avgTimeItem.setMetric(
 					StringUtils.lowerCase(gcMXBeanName + Constants.METRIC_SEPARATOR + Constants.GC_AVG_TIME));
 			avgTimeItem.setStep(Constants.DEFAULT_STEP);
@@ -110,7 +110,7 @@ public class GCGenInfoMBean extends AbstractMBean<Map<String, GCGenInfo>> implem
 
 			FalconItem countItem = new FalconItem();
 			countItem.setCounterType(CounterTypeEnum.GAUGE.toString());
-			countItem.setEndpoint(getJmxHost());
+			countItem.setEndpoint(Constants.ENDPOINT_PERFIX + getJmxHost());
 			countItem.setMetric(StringUtils.lowerCase(gcMXBeanName + Constants.METRIC_SEPARATOR + Constants.GC_COUNT));
 			countItem.setStep(Constants.DEFAULT_STEP);
 			countItem.setTags(StringUtils.lowerCase(Constants.TAGS_NAME_PREFIX + getJmxHost()));

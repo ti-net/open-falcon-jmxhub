@@ -25,6 +25,7 @@ public class Constants {
 	public static final String TAGS_NAME_PREFIX = "jmxhost=";
 	public static final String METRIC_SEPARATOR = ".";
 	public static final int DEFAULT_STEP = 60; // 单位秒
+	public static final String ENDPOINT_PERFIX = "jmxhub-";
 
 	// 正常状态
 	public static final int HOST_STATUS_NORMAL = 0;
