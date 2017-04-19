@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:redis="http://www.springframework.org/schema/redis" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/redis http://www.springframework.org/schema/redis/spring-redis.xsd
+           http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+	<!-- 启用注解装配 -->
+	<context:annotation-config />
+	<!-- 扫包 -->
+	<context:component-scan base-package="com.tinet.jmxhub" />
+	<!-- 加载系统配置 -->
+	<bean class="com.tinet.ccic.config.RedisPropertySourcesPlaceholderConfigurer">
+		<property name="appId" value="open-falcon-jmxhub" />
+		<property name="locations">
+			<list>
+				<value>classpath*:app.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 启用定时器 -->
+	<task:annotation-driven />
+</beans>
