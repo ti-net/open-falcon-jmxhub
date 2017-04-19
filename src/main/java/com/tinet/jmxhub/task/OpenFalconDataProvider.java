@@ -162,9 +162,9 @@ public class OpenFalconDataProvider {
 		try {
 			response = httpClient.execute(post);
 		} catch (ClientProtocolException e) {
-			logger.error(e.toString(), e);
+			logger.error("监控数据推送失败：[agent=" + getUri() + "]");
 		} catch (IOException e) {
-			logger.error(e.toString(), e);
+			logger.error("监控数据推送失败：[agent=" + getUri() + "]");
 		} finally {
 			try {
 				if (response != null) {
